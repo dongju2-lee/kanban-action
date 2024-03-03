@@ -1,15 +1,24 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const yaml = require('js-yaml');
 
-try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
+const run = async () => {
+    try {
+        const setFile = core.getInput('file')
+        const content = await fs.readFile(setFile, 'utf8')
+
+        let yamlData = yaml.load(content)
+
+        if (yamlData == null || yamlData == undefined) {
+            core.setFailed('yaml파일을 확인하세요')
+            return
+        }
+
+        let result = keys.reduce((dict, key) => dict[key], yamlData)
+        console.log(result)
+    } catch (error) {
+        core.setFailed(error.message);
+    }
 }
+
+run()
